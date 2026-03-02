@@ -64,7 +64,9 @@ const SEC=[
 ];
 
 const V={bg:"#e8ecf1",bd:"#d1d9e2",mt:"#64748b",dk:"#0f172a",pr:"#1e3a5f",pl:"#e8f0f6",sb:"#1e293b",shadow:"0 4px 24px rgba(15,23,42,.06)",shadowLg:"0 12px 48px rgba(15,23,42,.08)"};
-const CSS=`@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700;800;900&family=Shippori+Mincho:wght@500;600;700&display=swap');*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Noto Sans JP',sans-serif;background:${V.bg};color:${V.dk};-webkit-font-smoothing:antialiased;font-size:16px}::-webkit-scrollbar{width:6px}::-webkit-scrollbar-thumb{background:#94a3b8;border-radius:3px}@keyframes fu{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}.fu{animation:fu .5s ease-out both}input:focus,textarea:focus,select:focus{border-color:${V.pr}!important;box-shadow:0 0 0 3px rgba(30,58,95,.1)}button{font-family:inherit}textarea{font-family:inherit}.lp-sec-label{font-size:11px;font-weight:700;letter-spacing:.2em;color:${V.pr};text-transform:uppercase;margin-bottom:10px}.lp-h2{font-size:clamp(24px,4.5vw,38px);font-weight:900;letter-spacing:-.02em;line-height:1.25}`;
+const CSS=`@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700;800;900&family=Shippori+Mincho:wght@500;600;700&display=swap');*{margin:0;padding:0;box-sizing:border-box}html{overflow-x:hidden}body{font-family:'Noto Sans JP',sans-serif;background:${V.bg};color:${V.dk};-webkit-font-smoothing:antialiased;font-size:16px;overflow-x:hidden}::-webkit-scrollbar{width:6px}::-webkit-scrollbar-thumb{background:#94a3b8;border-radius:3px}@keyframes fu{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}.fu{animation:fu .5s ease-out both}input:focus,textarea:focus,select:focus{border-color:${V.pr}!important;box-shadow:0 0 0 3px rgba(30,58,95,.1)}button{font-family:inherit;min-height:44px;min-width:44px}textarea{font-family:inherit}.lp-sec-label{font-size:11px;font-weight:700;letter-spacing:.2em;color:${V.pr};text-transform:uppercase;margin-bottom:10px}.lp-h2{font-size:clamp(22px,4.5vw,38px);font-weight:900;letter-spacing:-.02em;line-height:1.25}
+@media(max-width:768px){.lp-header{height:56px!important;padding:0 12px!important}.lp-header .lp-nav-wrap{display:none}.lp-header.lp-menu-open .lp-nav-wrap{display:flex;flex-direction:column;position:absolute;top:56px;left:0;right:0;background:rgba(7,26,44,.98);backdrop-filter:blur(12px);padding:12px 16px;gap:6px;border-top:1px solid rgba(255,255,255,.1);max-height:70vh;overflow-y:auto}.lp-header .lp-nav-wrap .lp-nav-link{width:100%;justify-content:flex-start;padding:12px 14px}.lp-header .lp-actions{margin-left:auto;gap:6px}.lp-header .lp-actions button{padding:8px 14px;font-size:12px}.lp-hamburger{display:flex!important;align-items:center;justify-content:center;background:transparent;border:none;color:#fff;cursor:pointer;padding:8px}.lp-hero{padding:72px 16px 48px!important;min-height:100vh;min-height:100dvh}.lp-hero h1{font-size:clamp(22px,7vw,56px)!important;margin-bottom:14px!important}.lp-hero .lp-hero-lead{font-size:14px!important;margin-bottom:24px!important}.lp-hero .lp-hero-btns{flex-direction:column;width:100%;gap:10px}.lp-hero .lp-hero-btns button{width:100%;padding:14px 20px;font-size:15px}.lp-section{padding:48px 16px!important}.lp-section .lp-inner{max-width:100%!important;padding:0 4px}.lp-contact{padding:56px 16px!important}.lp-contact .lp-cta-btns{flex-direction:column;gap:10px}.lp-contact .lp-cta-btns button{width:100%;padding:14px 20px}.lp-scroll-top{bottom:20px!important;right:16px!important;width:48px!important;height:48px!important}}
+@media(min-width:769px){.lp-hamburger{display:none!important}}`;
 const initU=[{id:"a1",email:"admin@keikaku.jp",pw:"admin123",name:"\u7ba1\u7406\u8005",role:"admin",ok:true,region:null,affCode:"ADMIN001",refs:0,comm:0,perms:{innovation:1,subsidy:1,report:1,other:1},fd:{}},{id:"u1",email:"demo@example.com",pw:"demo123",name:"\u30c7\u30e2\u4f01\u696d\uff08\u6771\u4eac\uff09",role:"member",ok:true,region:"tokyo",affCode:"DEMO0001",refs:3,comm:4500,perms:{innovation:1,subsidy:1,report:0,other:0},fd:{}}];
 
 const profileToUser=(p)=>({id:p.id,email:p.email,pw:"",name:p.name,role:p.role||"member",ok:!!p.ok,region:p.region,affCode:p.aff_code||"",refs:p.refs||0,comm:p.comm||0,perms:p.perms||{innovation:0,subsidy:0,report:0,other:0},fd:p.fd||{}});
@@ -169,32 +171,39 @@ const LP_FAQ=[
 function Landing({user,nav}){
   const[faqOpen,setFaqOpen]=useState(null);
   const[showScrollTop,setShowScrollTop]=useState(false);
+  const[menuOpen,setMenuOpen]=useState(false);
   useEffect(()=>{const onScroll=()=>setShowScrollTop(window.scrollY>400);window.addEventListener("scroll",onScroll,{passive:true});return()=>window.removeEventListener("scroll",onScroll);},[]);
-  const scrollTo=(id)=>{const el=document.getElementById(id);el?.scrollIntoView({behavior:"smooth"});};
+  useEffect(()=>{menuOpen&&(document.body.style.overflow="hidden");return()=>{document.body.style.overflow="";};},[menuOpen]);
+  const scrollTo=(id)=>{setMenuOpen(false);const el=document.getElementById(id);el?.scrollIntoView({behavior:"smooth"});};
   const scrollToTop=()=>window.scrollTo({top:0,behavior:"smooth"});
+  const navLabels=["\u7d4c\u55b6\u9769\u65b0","\u30e1\u30ea\u30c3\u30c8","\u88dc\u52a9\u91d1","\u30b9\u30b1\u30b8\u30e5\u30fc\u30eb","\u30b5\u30dd\u30fc\u30c8","\u30ac\u30a4\u30c9"];
+  const navIds=["lp-about","lp-merit","lp-subsidy","lp-schedule","lp-support","lp-faq"];
   return(<div>
-    <header style={{position:"fixed",top:0,left:0,right:0,zIndex:100,padding:"0 32px",height:72,display:"flex",alignItems:"center",justifyContent:"space-between",background:"rgba(7,26,44,.95)",backdropFilter:"blur(12px)",boxShadow:"0 1px 0 rgba(255,255,255,.06)"}}>
+    <header className={`lp-header${menuOpen?" lp-menu-open":""}`} style={{position:"fixed",top:0,left:0,right:0,zIndex:100,padding:"0 32px",height:72,display:"flex",alignItems:"center",justifyContent:"space-between",background:"rgba(7,26,44,.95)",backdropFilter:"blur(12px)",boxShadow:"0 1px 0 rgba(255,255,255,.06)"}}>
       <div style={{display:"flex",alignItems:"center",gap:10}}><div style={{width:36,height:36,borderRadius:8,background:`linear-gradient(135deg,${V.pr},#2563eb)`,display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontWeight:900,fontSize:16,fontFamily:"'Shippori Mincho',serif",boxShadow:"0 2px 8px rgba(0,0,0,.2)"}}>{"\u9769"}</div><span style={{fontSize:15,fontWeight:800,color:"#fff",letterSpacing:"-.02em"}}>{"\u7d4c\u55b6\u9769\u65b0 AI \u30a2\u30b7\u30b9\u30c8"}</span></div>
-      <nav style={{display:"flex",alignItems:"center",gap:4}}>
-        {["lp-about","lp-merit","lp-subsidy","lp-schedule","lp-support","lp-faq"].map((id,i)=><button key={i} onClick={()=>scrollTo(id)} style={{padding:"8px 14px",fontSize:13,fontWeight:600,border:"none",borderRadius:8,cursor:"pointer",background:"transparent",color:"rgba(255,255,255,.85)"}}>{["\u7d4c\u55b6\u9769\u65b0","\u30e1\u30ea\u30c3\u30c8","\u88dc\u52a9\u91d1","\u30b9\u30b1\u30b8\u30e5\u30fc\u30eb","\u30b5\u30dd\u30fc\u30c8","\u30ac\u30a4\u30c9"][i]}</button>)}
-        {user?<button onClick={()=>nav(user.role==="admin"?"admin":"member")} style={{padding:"10px 20px",fontSize:13,fontWeight:700,border:"1px solid rgba(255,255,255,.25)",borderRadius:8,cursor:"pointer",background:"transparent",color:"#fff"}}>{"\u30c0\u30c3\u30b7\u30e5\u30dc\u30fc\u30c8"}</button>:<><button onClick={()=>nav("login")} style={{padding:"10px 18px",fontSize:13,fontWeight:600,border:"1px solid rgba(255,255,255,.25)",borderRadius:8,cursor:"pointer",background:"transparent",color:"#fff"}}>{"\u30ed\u30b0\u30a4\u30f3"}</button><button onClick={()=>nav("register")} style={{padding:"10px 22px",fontSize:13,fontWeight:800,border:"none",borderRadius:8,cursor:"pointer",background:"linear-gradient(135deg,#c5960c,#e8b90a)",color:"#0f172a",boxShadow:"0 4px 14px rgba(197,150,12,.35)"}}>{"\u7121\u6599\u767b\u9332"}</button></>}
+      <nav className="lp-nav-wrap" style={{display:"flex",alignItems:"center",gap:4}}>
+        {navIds.map((id,i)=><button key={i} onClick={()=>scrollTo(id)} className="lp-nav-link" style={{padding:"8px 14px",fontSize:13,fontWeight:600,border:"none",borderRadius:8,cursor:"pointer",background:"transparent",color:"rgba(255,255,255,.85)",display:"flex",alignItems:"center"}}>{navLabels[i]}</button>)}
+        <div className="lp-actions" style={{display:"flex",alignItems:"center",gap:4,marginLeft:8}}>
+          {user?<button onClick={()=>{setMenuOpen(false);nav(user.role==="admin"?"admin":"member");}} style={{padding:"10px 20px",fontSize:13,fontWeight:700,border:"1px solid rgba(255,255,255,.25)",borderRadius:8,cursor:"pointer",background:"transparent",color:"#fff"}}>{"\u30c0\u30c3\u30b7\u30e5\u30dc\u30fc\u30c8"}</button>:<><button onClick={()=>{setMenuOpen(false);nav("login");}} style={{padding:"10px 18px",fontSize:13,fontWeight:600,border:"1px solid rgba(255,255,255,.25)",borderRadius:8,cursor:"pointer",background:"transparent",color:"#fff"}}>{"\u30ed\u30b0\u30a4\u30f3"}</button><button onClick={()=>{setMenuOpen(false);nav("register");}} style={{padding:"10px 22px",fontSize:13,fontWeight:800,border:"none",borderRadius:8,cursor:"pointer",background:"linear-gradient(135deg,#c5960c,#e8b90a)",color:"#0f172a",boxShadow:"0 4px 14px rgba(197,150,12,.35)"}}>{"\u7121\u6599\u767b\u9332"}</button></>}
+        </div>
       </nav>
+      <button type="button" className="lp-hamburger" onClick={()=>setMenuOpen(o=>!o)} aria-label={menuOpen?"\u30e1\u30cb\u30e5\u30fc\u9589\u3058\u308b":"\u30e1\u30cb\u30e5\u30fc\u958b\u304f"} style={{display:"none",width:44,height:44}}>{I.menu(22,"#fff")}</button>
     </header>
 
-    <section style={{minHeight:"100vh",background:`linear-gradient(160deg,#051018 0%,#0f2744 35%,${V.pr} 65%,#1d4ed8 100%)`,display:"flex",alignItems:"center",justifyContent:"center",textAlign:"center",padding:"140px 32px 100px"}}><div style={{maxWidth:780}}>
+    <section className="lp-hero" style={{minHeight:"100vh",background:`linear-gradient(160deg,#051018 0%,#0f2744 35%,${V.pr} 65%,#1d4ed8 100%)`,display:"flex",alignItems:"center",justifyContent:"center",textAlign:"center",padding:"140px 32px 100px"}}><div style={{maxWidth:780,width:"100%"}}>
       <div className="fu" style={{display:"inline-flex",padding:"8px 18px",background:"rgba(197,150,12,.15)",border:"1px solid rgba(197,150,12,.35)",borderRadius:50,marginBottom:28}}><span style={{fontSize:12,color:"#e8c547",fontWeight:700,letterSpacing:".05em"}}>{"\u6771\u4eac \u30fb \u5927\u962a \u30fb \u798f\u5ca1 \u5bfe\u5fdc"}</span></div>
       <h1 className="fu lp-h2" style={{fontSize:"clamp(32px,6vw,56px)",fontWeight:900,color:"#fff",lineHeight:1.2,marginBottom:20,animationDelay:".08s",letterSpacing:"-.03em"}}>{"\u7d4c\u55b6\u9769\u65b0\u8a08\u753b\u306e\u7533\u8acb\u3092"}<br/><span style={{color:"#e8c547",textShadow:"0 0 40px rgba(232,197,71,.2)"}}>AI</span>{"\u304c\u5fb9\u5e95\u30b5\u30dd\u30fc\u30c8"}</h1>
-      <p className="fu" style={{fontSize:"clamp(15px,2vw,18px)",color:"rgba(255,255,255,.7)",lineHeight:1.85,marginBottom:36,animationDelay:".16s",maxWidth:520,marginLeft:"auto",marginRight:"auto"}}>{"\u30d5\u30a9\u30fc\u30e0\u5165\u529b\u304a\u3088\u3073AI\u5bfe\u8a71\u306e\u4e21\u65b9\u3067\u3001\u7533\u8acb\u66f8\u985e\u3092\u81ea\u52d5\u4f5c\u6210\u3002\u8a8d\u5b9a\u307e\u3067\u4e00\u7d9a\u306e\u30b5\u30dd\u30fc\u30c8\u3092\u63d0\u4f9b\u3057\u307e\u3059\u3002"}</p>
-      <div className="fu" style={{display:"flex",gap:14,justifyContent:"center",flexWrap:"wrap",animationDelay:".24s"}}><button onClick={()=>scrollTo("lp-contact")} style={{background:"linear-gradient(135deg,#c5960c,#e8b90a)",border:"none",padding:"16px 40px",fontSize:16,fontWeight:800,color:"#0f172a",cursor:"pointer",borderRadius:10,boxShadow:"0 6px 24px rgba(197,150,12,.4)"}}>{"\u7121\u6599\u3067\u59cb\u3081\u308b"}</button><button onClick={()=>nav("login")} style={{background:"rgba(255,255,255,.1)",border:"2px solid rgba(255,255,255,.25)",padding:"16px 40px",fontSize:16,fontWeight:700,color:"#fff",cursor:"pointer",borderRadius:10}}>{"\u30ed\u30b0\u30a4\u30f3"}</button></div>
+      <p className="fu lp-hero-lead" style={{fontSize:"clamp(15px,2vw,18px)",color:"rgba(255,255,255,.7)",lineHeight:1.85,marginBottom:36,animationDelay:".16s",maxWidth:520,marginLeft:"auto",marginRight:"auto"}}>{"\u30d5\u30a9\u30fc\u30e0\u5165\u529b\u304a\u3088\u3073AI\u5bfe\u8a71\u306e\u4e21\u65b9\u3067\u3001\u7533\u8acb\u66f8\u985e\u3092\u81ea\u52d5\u4f5c\u6210\u3002\u8a8d\u5b9a\u307e\u3067\u4e00\u7d9a\u306e\u30b5\u30dd\u30fc\u30c8\u3092\u63d0\u4f9b\u3057\u307e\u3059\u3002"}</p>
+      <div className="fu lp-hero-btns" style={{display:"flex",gap:14,justifyContent:"center",flexWrap:"wrap",animationDelay:".24s"}}><button onClick={()=>scrollTo("lp-contact")} style={{background:"linear-gradient(135deg,#c5960c,#e8b90a)",border:"none",padding:"16px 40px",fontSize:16,fontWeight:800,color:"#0f172a",cursor:"pointer",borderRadius:10,boxShadow:"0 6px 24px rgba(197,150,12,.4)"}}>{"\u7121\u6599\u3067\u59cb\u3081\u308b"}</button><button onClick={()=>nav("login")} style={{background:"rgba(255,255,255,.1)",border:"2px solid rgba(255,255,255,.25)",padding:"16px 40px",fontSize:16,fontWeight:700,color:"#fff",cursor:"pointer",borderRadius:10}}>{"\u30ed\u30b0\u30a4\u30f3"}</button></div>
     </div></section>
 
-    <section id="lp-about" style={{padding:"96px 32px",background:V.bg}}><div style={{maxWidth:860,margin:"0 auto"}}>
+    <section id="lp-about" className="lp-section" style={{padding:"96px 32px",background:V.bg}}><div className="lp-inner" style={{maxWidth:860,margin:"0 auto"}}>
       <p className="lp-sec-label" style={{display:"flex",alignItems:"center",gap:6}}>{I.clipboard(14,V.pr)} {"ABOUT"}</p>
       <h2 className="lp-h2" style={{color:V.dk,marginBottom:28,display:"flex",alignItems:"center",gap:12}}>{"\u7d4c\u55b6\u9769\u65b0\u3068\u306f"}</h2>
       <div style={{background:"#fff",borderRadius:16,padding:"36px 40px",boxShadow:V.shadow,border:`1px solid ${V.bd}`}}><p style={{fontSize:17,lineHeight:2,color:V.dk,fontWeight:500}}>{"\u7d4c\u55b6\u9769\u65b0\u8a08\u753b\u306f\u3001\u4e2d\u5c0f\u4f01\u696d\u304c\u65b0\u554f\u984c\u306e\u7814\u7a76\u958b\u767a\u30fb\u65b0\u554f\u984c\u306e\u554f\u984c\u89e3\u6c7a\u306b\u53d6\u308a\u7d44\u3080\u65b0\u4e8b\u696d\u6d3b\u52d5\u3092\u8a08\u753b\u5316\u3057\u3001\u77e2\u90a6\u306e\u8a31\u8af8\u3092\u5f97\u3066\u8a2d\u7acb\u3055\u308c\u305f\u8a08\u753b\u3092\u57fa\u3065\u3044\u3066\u3001\u90fd\u9053\u5e9c\u7701\u30fb\u5e02\u30fb\u30c6\u30a3\u30fc\u30eb\u7b49\u306e\u7a93\u53e3\u306b\u7533\u8acb\u3059\u308b\u5236\u5ea6\u3067\u3059\u3002\u8a8d\u5b9a\u3092\u5f97\u308b\u3068\u3001\u3082\u306e\u3065\u304f\u308a\u88dc\u52a9\u91d1\u30fb\u6301\u7d9a\u5316\u88dc\u52a9\u91d1\u3001\u65e5\u672c\u653f\u7b56\u91d1\u878d\u516c\u5eab\u306e\u5229\u5b50\u512a\u904e\u3001\u56fa\u5b9a\u8cc7\u7523\u7a0e\u6e1b\u514d\u306a\u3069\u306e\u5229\u76ca\u304c\u5f97\u3089\u308c\u307e\u3059\u3002"}</p></div>
     </div></section>
 
-    <section id="lp-merit" style={{padding:"96px 32px",background:"#fff",borderTop:`1px solid ${V.bd}`}}><div style={{maxWidth:1000,margin:"0 auto"}}>
+    <section id="lp-merit" className="lp-section" style={{padding:"96px 32px",background:"#fff",borderTop:`1px solid ${V.bd}`}}><div className="lp-inner" style={{maxWidth:1000,margin:"0 auto"}}>
       <p className="lp-sec-label" style={{display:"flex",alignItems:"center",gap:6}}>{I.star(14,V.pr)} {"MERIT"}</p>
       <h2 className="lp-h2" style={{color:V.dk,marginBottom:40}}>{"\u7d4c\u55b6\u9769\u65b0\u53d6\u5f97\u306e\u30e1\u30ea\u30c3\u30c8"}</h2>
       <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(260px,1fr))",gap:24}}>
@@ -202,7 +211,7 @@ function Landing({user,nav}){
       </div>
     </div></section>
 
-    <section id="lp-subsidy" style={{padding:"96px 32px",background:V.bg}}><div style={{maxWidth:1000,margin:"0 auto"}}>
+    <section id="lp-subsidy" className="lp-section" style={{padding:"96px 32px",background:V.bg}}><div className="lp-inner" style={{maxWidth:1000,margin:"0 auto"}}>
       <p className="lp-sec-label" style={{display:"flex",alignItems:"center",gap:6}}>{I.coins(14,V.pr)} {"SUBSIDY"}</p>
       <h2 className="lp-h2" style={{color:V.dk,marginBottom:12}}>{"\u7d4c\u55b6\u9769\u65b0\u3068\u9023\u643a\u3067\u5229\u7528\u3067\u304d\u308b\u88dc\u52a9\u91d1\u30fb\u878d\u8cc7"}</h2>
       <p style={{fontSize:15,color:V.mt,marginBottom:40,fontWeight:500}}>{"\u8a8d\u5b9a\u3092\u5f97\u308b\u3068\u3001\u4ee5\u4e0b\u306e\u5236\u5ea6\u3067\u512a\u904e\u304c\u53d7\u3051\u3089\u308c\u307e\u3059\u3002\u6700\u65b0\u306e\u8981\u4ef6\u306f\u5404\u516c\u5f0f\u30b5\u30a4\u30c8\u3067\u78ba\u8a8d\u3057\u3066\u304f\u3060\u3055\u3044\u3002"}</p>
@@ -211,7 +220,7 @@ function Landing({user,nav}){
       </div>
     </div></section>
 
-    <section id="lp-schedule" style={{padding:"96px 32px",background:V.bg}}><div style={{maxWidth:1000,margin:"0 auto"}}>
+    <section id="lp-schedule" className="lp-section" style={{padding:"96px 32px",background:V.bg}}><div className="lp-inner" style={{maxWidth:1000,margin:"0 auto"}}>
       <p className="lp-sec-label" style={{display:"flex",alignItems:"center",gap:6}}>{I.cal(14,V.pr)} {"SCHEDULE"}</p>
       <h2 className="lp-h2" style={{color:V.dk,marginBottom:12}}>{"\u6771\u4eac\u30fb\u5927\u962a\u30fb\u798f\u5ca1 \u30b9\u30b1\u30b8\u30e5\u30fc\u30eb"}</h2>
       <p style={{fontSize:15,color:V.mt,marginBottom:36,fontWeight:500}}>{"\u5404\u81ea\u6cbb\u4f53\u516c\u5f0f\u60c5\u5831\u306b\u57fa\u3065\u304f\u6d41\u308c\u3067\u3059\u3002\u6700\u65b0\u306f\u5404\u7a93\u53e3\u306b\u78ba\u8a8d\u3057\u3066\u304f\u3060\u3055\u3044\u3002"}</p>
@@ -223,7 +232,7 @@ function Landing({user,nav}){
       </div>
     </div></section>
 
-    <section id="lp-support" style={{padding:"96px 32px",background:"#fff",borderTop:`1px solid ${V.bd}`}}><div style={{maxWidth:1000,margin:"0 auto"}}>
+    <section id="lp-support" className="lp-section" style={{padding:"96px 32px",background:"#fff",borderTop:`1px solid ${V.bd}`}}><div className="lp-inner" style={{maxWidth:1000,margin:"0 auto"}}>
       <p className="lp-sec-label" style={{display:"flex",alignItems:"center",gap:6}}>{I.brain(14,V.pr)} {"SUPPORT"}</p>
       <h2 className="lp-h2" style={{color:V.dk,marginBottom:40}}>{"\u30b5\u30dd\u30fc\u30c8\u5185\u5bb9"}</h2>
       <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(280px,1fr))",gap:28}}>
@@ -234,7 +243,7 @@ function Landing({user,nav}){
       </div>
     </div></section>
 
-    <section id="lp-faq" style={{padding:"96px 32px",background:V.bg}}><div style={{maxWidth:800,margin:"0 auto"}}>
+    <section id="lp-faq" className="lp-section" style={{padding:"96px 32px",background:V.bg}}><div className="lp-inner" style={{maxWidth:800,margin:"0 auto"}}>
       <p className="lp-sec-label" style={{display:"flex",alignItems:"center",gap:6}}>{I.info(14,V.pr)} {"FAQ"}</p>
       <h2 className="lp-h2" style={{color:V.dk,marginBottom:36}}>{"\u3088\u304f\u3042\u308b\u8cea\u554f"}</h2>
       <div style={{display:"flex",flexDirection:"column",gap:12}}>{LP_FAQ.map((f,i)=><div key={i} style={{background:"#fff",borderRadius:14,border:`1px solid ${V.bd}`,overflow:"hidden",boxShadow:V.shadow}}>
@@ -243,14 +252,14 @@ function Landing({user,nav}){
       </div>)}</div>
     </div></section>
 
-    <section id="lp-contact" style={{padding:"100px 32px",background:`linear-gradient(160deg,${V.pr} 0%,#0f172a 100%)`,color:"#fff"}}><div style={{maxWidth:720,margin:"0 auto",textAlign:"center"}}>
+    <section id="lp-contact" className="lp-contact" style={{padding:"100px 32px",background:`linear-gradient(160deg,${V.pr} 0%,#0f172a 100%)`,color:"#fff"}}><div className="lp-inner" style={{maxWidth:720,margin:"0 auto",textAlign:"center"}}>
       <p className="lp-sec-label" style={{color:"rgba(255,255,255,.7)",marginBottom:12}}>{"CONTACT"}</p>
       <h2 className="lp-h2" style={{fontSize:"clamp(28px,4.5vw,42px)",color:"#fff",marginBottom:16}}>{"\u304a\u7533\u8fbc\u307f\u30fb\u304a\u554f\u3044\u5408\u308f\u305b"}</h2>
       <p style={{fontSize:17,opacity:.9,marginBottom:40,lineHeight:1.8}}>{"\u7121\u6599\u4f1a\u54e1\u767b\u9332\u3067\u3059\u3050\u306b\u59cb\u3081\u3089\u308c\u307e\u3059\u3002\u7d4c\u55b6\u9769\u65b0\u8a08\u753b\u306e\u7533\u8acb\u30b5\u30dd\u30fc\u30c8\u3092\u3054\u5229\u7528\u304f\u3060\u3055\u3044\u3002"}</p>
-      <div style={{display:"flex",gap:16,justifyContent:"center",flexWrap:"wrap"}}><button onClick={()=>nav("register")} style={{background:"linear-gradient(135deg,#c5960c,#e8b90a)",border:"none",padding:"18px 44px",fontSize:16,fontWeight:800,color:"#0f172a",cursor:"pointer",borderRadius:10,boxShadow:"0 6px 24px rgba(197,150,12,.4)"}}>{"\u7121\u6599\u767b\u9332\u3067\u59cb\u3081\u308b"}</button><button onClick={()=>nav("login")} style={{background:"rgba(255,255,255,.1)",border:"2px solid rgba(255,255,255,.3)",padding:"18px 44px",fontSize:16,fontWeight:700,color:"#fff",cursor:"pointer",borderRadius:10}}>{"\u30ed\u30b0\u30a4\u30f3"}</button></div>
+      <div className="lp-cta-btns" style={{display:"flex",gap:16,justifyContent:"center",flexWrap:"wrap"}}><button onClick={()=>nav("register")} style={{background:"linear-gradient(135deg,#c5960c,#e8b90a)",border:"none",padding:"18px 44px",fontSize:16,fontWeight:800,color:"#0f172a",cursor:"pointer",borderRadius:10,boxShadow:"0 6px 24px rgba(197,150,12,.4)"}}>{"\u7121\u6599\u767b\u9332\u3067\u59cb\u3081\u308b"}</button><button onClick={()=>nav("login")} style={{background:"rgba(255,255,255,.1)",border:"2px solid rgba(255,255,255,.3)",padding:"18px 44px",fontSize:16,fontWeight:700,color:"#fff",cursor:"pointer",borderRadius:10}}>{"\u30ed\u30b0\u30a4\u30f3"}</button></div>
     </div></section>
 
-    {showScrollTop&&<button onClick={scrollToTop} aria-label={"\u9876\u3078\u30b9\u30af\u30ed\u30fc\u30eb"} style={{position:"fixed",bottom:32,right:32,zIndex:90,width:52,height:52,borderRadius:"50%",border:"none",background:`linear-gradient(135deg,${V.pr},#2563eb)`,color:"#fff",cursor:"pointer",boxShadow:V.shadowLg,display:"flex",alignItems:"center",justifyContent:"center",transition:"transform .2s"}}><span style={{transform:"rotate(-90deg)",display:"inline-block"}}>{I.chevR(22,"#fff")}</span></button>}
+    {showScrollTop&&<button type="button" className="lp-scroll-top" onClick={scrollToTop} aria-label={"\u9876\u3078\u30b9\u30af\u30ed\u30fc\u30eb"} style={{position:"fixed",bottom:32,right:32,zIndex:90,width:52,height:52,borderRadius:"50%",border:"none",background:`linear-gradient(135deg,${V.pr},#2563eb)`,color:"#fff",cursor:"pointer",boxShadow:V.shadowLg,display:"flex",alignItems:"center",justifyContent:"center",transition:"transform .2s"}}><span style={{transform:"rotate(-90deg)",display:"inline-block"}}>{I.chevR(22,"#fff")}</span></button>}
   </div>);
 }
 
